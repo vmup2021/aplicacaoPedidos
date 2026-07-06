@@ -1,0 +1,103 @@
+<div class="dashboard">
+  <div class="dashboard__head">
+    <div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">
+        @if (auth.isAprovador()) {
+          Resumo dos pedidos de acesso que aguardam a sua decisão.
+        } @else {
+          Resumo dos seus pedidos de acesso.
+        }
+      </p>
+    </div>
+    @if (!auth.isAprovador()) {
+      <a routerLink="/novo-pedido" class="btn btn-accent">+ Novo Pedido</a>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state"><span class="spinner"></span> A carregar dashboard…</div>
+  } @else {
+    @if (summary(); as s) {
+      <div class="stat-grid">
+        @if (!auth.isAprovador()) {
+          <div class="card stat-card">
+            <span class="stat-card__label">Pedidos Ativos</span>
+            <span class="stat-card__value">{{ s.pedidosAtivos }} / {{ s.limitePedidosAtivos }}</span>
+            <span class="stat-card__hint">limite de {{ s.limitePedidosAtivos }}</span>
+          </div>
+        }
+        <div class="card stat-card">
+          <span class="stat-card__label">Pendentes</span>
+          <span class="stat-card__value">{{ s.pendentes }}</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-card__label">Aprovados</span>
+          <span class="stat-card__value stat-card__value--success">{{ s.aprovados }}</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-card__label">Rejeitados</span>
+          <span class="stat-card__value stat-card__value--danger">{{ s.rejeitados }}</span>
+        </div>
+      </div>
+
+      <div class="card list-card">
+        <div class="list-card__head">
+          <h2 class="list-card__title">
+            {{ auth.isAprovador() ? 'Pedidos Pendentes recentes' : 'Meus Pedidos recentes' }}
+          </h2>
+          <a [routerLink]="auth.isAprovador() ? '/pedidos-pendentes' : '/meus-pedidos'" class="list-card__link">
+            Ver todos
+          </a>
+        </div>
+
+        @if (recentRequests().length === 0) {
+          <div class="empty-state">Não existem pedidos para apresentar.</div>
+        } @else {
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  @if (auth.isAprovador()) {
+                    <th>Colaborador</th>
+                  }
+                  <th>Aplicação</th>
+                  <th>Estado</th>
+                  <th>Data do Pedido</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of recentRequests(); track r.id) {
+                  <tr>
+                    <td class="mono">{{ r.id }}</td>
+                    @if (auth.isAprovador()) {
+                      <td>{{ r.colaboradorNome }}</td>
+                    }
+                    <td>{{ r.aplicacaoNome }}</td>
+                    <td><app-state-badge [state]="r.estado" /></td>
+                    <td>{{ r.dataPedido | date: 'dd/MM/yyyy' }}</td>
+                    <td>
+                      <a
+                        class="icon-btn"
+                        [routerLink]="
+                          auth.isAprovador() && r.estado === RequestState.PENDENTE
+                            ? ['/pedidos-pendentes', r.id, 'decisao']
+                            : ['/pedidos', r.id]
+                        "
+                        title="Ver pedido"
+                      >
+                        👁
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

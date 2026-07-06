@@ -1,0 +1,32 @@
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Perfil</h1>
+    <p class="page-subtitle">Os seus dados de conta no Natixis Access Management.</p>
+  </div>
+</div>
+
+@if (auth.currentUser(); as user) {
+  <div class="card profile-card">
+    <div class="profile-card__avatar">{{ initials() }}</div>
+    <dl class="detail-list">
+      <div class="detail-list__row">
+        <dt>Nome</dt>
+        <dd>{{ user.nome }}</dd>
+      </div>
+      <div class="detail-list__row">
+        <dt>Email</dt>
+        <dd>{{ user.email }}</dd>
+      </div>
+      <div class="detail-list__row">
+        <dt>Departamento</dt>
+        <dd>{{ user.departamento }}</dd>
+      </div>
+      <div class="detail-list__row">
+        <dt>Perfil</dt>
+        <dd>{{ ROLE_LABEL[user.perfil] }}</dd>
+      </div>
+    </dl>
+
+    <button type="button" class="btn btn-danger-ghost profile-card__logout" (click)="logout()">Terminar Sessão</button>
+  </div>
+}

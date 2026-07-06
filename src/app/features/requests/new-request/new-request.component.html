@@ -1,0 +1,57 @@
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Novo Pedido de Acesso</h1>
+    <p class="page-subtitle">Preencha os dados abaixo para solicitar acesso a uma aplicação.</p>
+  </div>
+</div>
+
+<div class="card form-card">
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (errorMessage()) {
+      <div class="banner-error">{{ errorMessage() }}</div>
+    }
+
+    <div class="form-group">
+      <label class="form-label" for="aplicacao">Aplicação<span class="required">*</span></label>
+      <select
+        id="aplicacao"
+        class="form-control"
+        [class.invalid]="form.controls.aplicacaoId.invalid && form.controls.aplicacaoId.touched"
+        formControlName="aplicacaoId"
+      >
+        <option [ngValue]="null" disabled>Selecione uma aplicação</option>
+        @for (app of applications(); track app.id) {
+          <option [ngValue]="app.id">{{ app.nome }}</option>
+        }
+      </select>
+      @if (form.controls.aplicacaoId.invalid && form.controls.aplicacaoId.touched) {
+        <span class="form-error">Selecione a aplicação pretendida.</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="justificativa">Justificação<span class="required">*</span></label>
+      <textarea
+        id="justificativa"
+        class="form-control"
+        rows="6"
+        [class.invalid]="form.controls.justificativa.invalid && form.controls.justificativa.touched"
+        formControlName="justificativa"
+        placeholder="Explique a necessidade de acesso…"
+      ></textarea>
+      @if (form.controls.justificativa.invalid && form.controls.justificativa.touched) {
+        <span class="form-error">Descreva a justificação com pelo menos 20 caracteres.</span>
+      }
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-ghost" (click)="cancel()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+        @if (submitting()) {
+          <span class="spinner"></span>
+        }
+        Submeter Pedido
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,80 @@
+@if (loading()) {
+  <div class="empty-state"><span class="spinner"></span> A carregar pedido…</div>
+} @else {
+  @if (request(); as r) {
+    <div class="page-head">
+      <div class="detail-title">
+        <h1 class="page-title">Pedido #{{ r.id }}</h1>
+        <app-state-badge [state]="r.estado" />
+      </div>
+      <button class="btn btn-ghost" type="button" (click)="goBack()">Voltar</button>
+    </div>
+
+    <div class="detail-grid">
+      <div class="card detail-card">
+        <dl class="detail-list">
+          <div class="detail-list__row">
+            <dt>Aplicação</dt>
+            <dd>{{ r.aplicacaoNome }}</dd>
+          </div>
+          @if (auth.isAprovador()) {
+            <div class="detail-list__row">
+              <dt>Colaborador</dt>
+              <dd>{{ r.colaboradorNome }}</dd>
+            </div>
+          }
+          <div class="detail-list__row">
+            <dt>Data do Pedido</dt>
+            <dd>{{ r.dataPedido | date: 'dd/MM/yyyy HH:mm' }}</dd>
+          </div>
+          <div class="detail-list__row detail-list__row--block">
+            <dt>Justificação</dt>
+            <dd>{{ r.justificativa }}</dd>
+          </div>
+          @if (r.justificativaDecisao) {
+            <div class="detail-list__row detail-list__row--block">
+              <dt>Justificação da Decisão</dt>
+              <dd>{{ r.justificativaDecisao }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+
+      <div class="card detail-card">
+        <h2 class="detail-card__title">Histórico de Estados</h2>
+        <table class="data-table history-table">
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>Responsável</th>
+              <th>Data</th>
+              <th>Justificação</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (state of timelineStates; track state) {
+              <tr [class.history-table__row--empty]="!historyEntryFor(state)">
+                <td>
+                  <span class="history-dot" [class]="'history-dot--' + state.toLowerCase()"></span>
+                  {{ state === RequestState.PENDENTE ? 'Pendente'
+                  : state === RequestState.APROVADO ? 'Aprovado' : 'Rejeitado' }}
+                </td>
+                @if (historyEntryFor(state); as entry) {
+                  <td>{{ entry.responsavelNome }}</td>
+                  <td>{{ entry.data | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ entry.justificativa }}</td>
+                } @else {
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  } @else {
+    <div class="empty-state">Pedido não encontrado.</div>
+  }
+}

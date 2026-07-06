@@ -1,0 +1,38 @@
+<div class="shell">
+  <aside class="sidebar">
+    <a class="sidebar__brand" routerLink="/dashboard" aria-label="Ir para o dashboard">
+      <span class="sidebar__brand-mark">NAM</span>
+      <span class="sidebar__brand-name">NATIXIS</span>
+    </a>
+
+    <nav class="sidebar__nav">
+      @for (item of navItems(); track item.path) {
+        <a class="sidebar__link" [routerLink]="item.path" routerLinkActive="sidebar__link--active">
+          <span class="sidebar__icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <div class="shell__main">
+    <header class="topbar">
+      <button class="icon-btn topbar__menu" type="button" aria-label="Menu">☰</button>
+      <div class="topbar__spacer"></div>
+      <div class="topbar__user">
+        <a class="topbar__profile-link" routerLink="/perfil" aria-label="Abrir perfil">
+          <div class="topbar__user-info">
+            <span class="topbar__user-name">{{ auth.currentUser()?.nome }}</span>
+            <span class="topbar__user-role">{{ roleLabel() }}</span>
+          </div>
+          <div class="topbar__avatar">{{ initials() }}</div>
+        </a>
+        <button class="btn btn-ghost topbar__logout" type="button" (click)="logout()">Sair</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

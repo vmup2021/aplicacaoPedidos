@@ -1,0 +1,130 @@
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Aplicações</h1>
+    <p class="page-subtitle">Catálogo de aplicações disponíveis para pedidos de acesso.</p>
+  </div>
+  @if (auth.isAprovador()) {
+    <button type="button" class="btn btn-accent" (click)="openCreate()">+ Nova Aplicação</button>
+  }
+</div>
+
+<div class="card">
+  <div class="filters-bar">
+    <div class="filters-bar__field filters-bar__search">
+      <label for="pesquisa">Pesquisar</label>
+      <input
+        id="pesquisa"
+        type="text"
+        placeholder="Pesquisar por nome ou código…"
+        [ngModel]="pesquisa()"
+        (ngModelChange)="pesquisa.set($event); onSearchChange()"
+        name="pesquisa"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state"><span class="spinner"></span> A carregar aplicações…</div>
+  } @else if (applications().length === 0) {
+    <div class="empty-state">Nenhuma aplicação encontrada.</div>
+  } @else {
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Ativa</th>
+            <th>Pedido</th>
+            @if (auth.isAprovador()) {
+              <th>Ações</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (app of applications(); track app.id) {
+            <tr>
+              <td class="mono">{{ app.codigo }}</td>
+              <td>{{ app.nome }}</td>
+              <td>{{ app.descricao }}</td>
+              <td>
+                <span class="dot-status" [class.dot-status--on]="app.ativa">{{ app.ativa ? 'Sim' : 'Não' }}</span>
+              </td>
+              <td class="actions-cell">
+                <button
+                  type="button"
+                  class="btn btn-ghost"
+                  (click)="startRequest(app)"
+                  [disabled]="!app.ativa"
+                  title="Abrir novo pedido para esta aplicação"
+                >
+                  Novo pedido
+                </button>
+              </td>
+              @if (auth.isAprovador()) {
+                <td class="actions-cell">
+                  <button class="icon-btn" type="button" (click)="openEdit(app)" title="Editar">✎</button>
+                  <button class="icon-btn" type="button" (click)="remove(app)" title="Eliminar">🗑</button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <app-pagination
+    [page]="page()"
+    [totalPages]="totalPages()"
+    [totalElements]="totalElements()"
+    (pageChange)="onPageChange($event)"
+  />
+</div>
+
+@if (panelOpen()) {
+  <div class="overlay" (click)="closePanel()">
+    <div class="panel card" (click)="$event.stopPropagation()">
+      <h2 class="panel__title">{{ editingId() ? 'Editar Aplicação' : 'Nova Aplicação' }}</h2>
+
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        @if (errorMessage()) {
+          <div class="banner-error">{{ errorMessage() }}</div>
+        }
+
+        <div class="form-group">
+          <label class="form-label" for="codigo">Código<span class="required">*</span></label>
+          <input id="codigo" class="form-control" formControlName="codigo" placeholder="Ex: SAP" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="nome">Nome<span class="required">*</span></label>
+          <input id="nome" class="form-control" formControlName="nome" placeholder="Ex: SAP" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="descricao">Descrição<span class="required">*</span></label>
+          <textarea id="descricao" class="form-control" rows="3" formControlName="descricao"></textarea>
+        </div>
+
+        <div class="form-group form-group--inline">
+          <label class="decision-option">
+            <input type="checkbox" formControlName="ativa" />
+            Aplicação ativa
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" (click)="closePanel()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            @if (saving()) {
+              <span class="spinner"></span>
+            }
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

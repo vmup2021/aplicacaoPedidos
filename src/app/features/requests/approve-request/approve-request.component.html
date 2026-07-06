@@ -1,0 +1,85 @@
+@if (loading()) {
+  <div class="empty-state"><span class="spinner"></span> A carregar pedido…</div>
+} @else {
+  @if (request(); as r) {
+    <div class="page-head">
+      <div class="detail-title">
+        <h1 class="page-title">Pedido #{{ r.id }}</h1>
+        <app-state-badge [state]="r.estado" />
+      </div>
+    </div>
+
+    <div class="card approve-card">
+      <dl class="detail-list">
+        <div class="detail-list__row">
+          <dt>Colaborador</dt>
+          <dd>{{ r.colaboradorNome }}</dd>
+        </div>
+        <div class="detail-list__row">
+          <dt>Aplicação</dt>
+          <dd>{{ r.aplicacaoNome }}</dd>
+        </div>
+        <div class="detail-list__row">
+          <dt>Data do Pedido</dt>
+          <dd>{{ r.dataPedido | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        </div>
+        <div class="detail-list__row detail-list__row--block">
+          <dt>Justificação do Colaborador</dt>
+          <dd>{{ r.justificativa }}</dd>
+        </div>
+      </dl>
+
+      <hr class="approve-card__divider" />
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (errorMessage()) {
+          <div class="banner-error">{{ errorMessage() }}</div>
+        }
+
+        <div class="form-group">
+          <label class="form-label">Decisão<span class="required">*</span></label>
+          <div class="decision-options">
+            <label class="decision-option">
+              <input type="radio" formControlName="decisao" [value]="RequestState.APROVADO" />
+              Aprovar
+            </label>
+            <label class="decision-option">
+              <input type="radio" formControlName="decisao" [value]="RequestState.REJEITADO" />
+              Rejeitar
+            </label>
+          </div>
+          @if (form.controls.decisao.invalid && form.controls.decisao.touched) {
+            <span class="form-error">Selecione Aprovar ou Rejeitar.</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="justificativaDecisao">Justificação da Decisão<span class="required">*</span></label>
+          <textarea
+            id="justificativaDecisao"
+            class="form-control"
+            rows="5"
+            [class.invalid]="form.controls.justificativaDecisao.invalid && form.controls.justificativaDecisao.touched"
+            formControlName="justificativaDecisao"
+            placeholder="Explique a decisão…"
+          ></textarea>
+          @if (form.controls.justificativaDecisao.invalid && form.controls.justificativaDecisao.touched) {
+            <span class="form-error">A justificação é obrigatória.</span>
+          }
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" (click)="cancel()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+            @if (submitting()) {
+              <span class="spinner"></span>
+            }
+            Guardar Decisão
+          </button>
+        </div>
+      </form>
+    </div>
+  } @else {
+    <div class="empty-state">Pedido não encontrado.</div>
+  }
+}

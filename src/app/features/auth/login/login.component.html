@@ -1,0 +1,67 @@
+<div class="login-page">
+  <div class="login-card card">
+    <div class="brand">
+      <div class="brand__mark">NAM</div>
+      <div>
+        <div class="brand__name">NATIXIS</div>
+        <div class="brand__tagline">Access Management</div>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (errorMessage()) {
+        <div class="banner-error">{{ errorMessage() }}</div>
+      }
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          [class.invalid]="form.controls.email.invalid && form.controls.email.touched"
+          formControlName="email"
+          placeholder="email@exemplo.com"
+          autocomplete="username"
+        />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <span class="form-error">Introduza um email válido.</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          [class.invalid]="form.controls.password.invalid && form.controls.password.touched"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
+        @if (form.controls.password.invalid && form.controls.password.touched) {
+          <span class="form-error">A palavra-passe é obrigatória.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary login-submit" [disabled]="loading()">
+        @if (loading()) {
+          <span class="spinner"></span>
+        }
+        Login
+      </button>
+    </form>
+
+    @if (useMockApi) {
+      <div class="mock-panel">
+        <p class="mock-panel__title">🧪 Modo de teste (mock API) — qualquer password serve</p>
+        @for (account of mockAccounts; track account.email) {
+          <button type="button" class="mock-panel__account" (click)="fillMockAccount(account.email)">
+            {{ account.label }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

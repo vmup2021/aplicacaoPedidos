@@ -1,0 +1,132 @@
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Utilizadores</h1>
+    <p class="page-subtitle">Gestão de contas, perfis e departamentos.</p>
+  </div>
+  <button type="button" class="btn btn-accent" (click)="openCreate()">+ Novo Utilizador</button>
+</div>
+
+<div class="card">
+  <div class="filters-bar">
+    <div class="filters-bar__field filters-bar__search">
+      <label for="pesquisa">Pesquisar</label>
+      <input
+        id="pesquisa"
+        type="text"
+        placeholder="Pesquisar por nome ou email…"
+        [ngModel]="pesquisa()"
+        (ngModelChange)="pesquisa.set($event); onSearchChange()"
+        name="pesquisa"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state"><span class="spinner"></span> A carregar utilizadores…</div>
+  } @else if (users().length === 0) {
+    <div class="empty-state">Nenhum utilizador encontrado.</div>
+  } @else {
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Departamento</th>
+            <th>Perfil</th>
+            <th>Ativo</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr>
+              <td>{{ user.nome }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.departamento }}</td>
+              <td>{{ ROLE_LABEL[user.perfil] }}</td>
+              <td>
+                <span class="dot-status" [class.dot-status--on]="user.ativo">{{ user.ativo ? 'Sim' : 'Não' }}</span>
+              </td>
+              <td class="actions-cell">
+                <button class="icon-btn" type="button" (click)="openEdit(user)" title="Editar">✎</button>
+                <button class="icon-btn" type="button" (click)="remove(user)" title="Eliminar">🗑</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <app-pagination
+    [page]="page()"
+    [totalPages]="totalPages()"
+    [totalElements]="totalElements()"
+    (pageChange)="onPageChange($event)"
+  />
+</div>
+
+@if (panelOpen()) {
+  <div class="overlay" (click)="closePanel()">
+    <div class="panel card" (click)="$event.stopPropagation()">
+      <h2 class="panel__title">{{ editingId() ? 'Editar Utilizador' : 'Novo Utilizador' }}</h2>
+
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        @if (errorMessage()) {
+          <div class="banner-error">{{ errorMessage() }}</div>
+        }
+
+        <div class="form-group">
+          <label class="form-label" for="nome">Nome<span class="required">*</span></label>
+          <input id="nome" class="form-control" formControlName="nome" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email<span class="required">*</span></label>
+          <input id="email" type="email" class="form-control" formControlName="email" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="departamento">Departamento<span class="required">*</span></label>
+          <input id="departamento" class="form-control" formControlName="departamento" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="perfil">Perfil<span class="required">*</span></label>
+          <select id="perfil" class="form-control" formControlName="perfil">
+            <option [value]="UserRole.COLABORADOR">Colaborador</option>
+            <option [value]="UserRole.APROVADOR">Aprovador</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">
+            Password
+            @if (editingId()) {
+              <span class="form-hint">(deixe em branco para manter a atual)</span>
+            }
+          </label>
+          <input id="password" type="password" class="form-control" formControlName="password" autocomplete="new-password" />
+        </div>
+
+        <div class="form-group form-group--inline">
+          <label class="decision-option">
+            <input type="checkbox" formControlName="ativo" />
+            Conta ativa
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" (click)="closePanel()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            @if (saving()) {
+              <span class="spinner"></span>
+            }
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

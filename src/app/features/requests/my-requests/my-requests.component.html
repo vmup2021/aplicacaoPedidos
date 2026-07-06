@@ -1,0 +1,84 @@
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Meus Pedidos</h1>
+    <p class="page-subtitle">Consulte e acompanhe o estado dos seus pedidos de acesso.</p>
+  </div>
+  <a routerLink="/novo-pedido" class="btn btn-accent">+ Novo Pedido</a>
+</div>
+
+<div class="card">
+  <div class="filters-bar">
+    <div class="filters-bar__field">
+      <label for="estado">Estado</label>
+      <select id="estado" [(ngModel)]="filters.estado" (ngModelChange)="onFilterChange()">
+        <option value="TODOS">Todos</option>
+        <option [value]="RequestState.PENDENTE">Pendente</option>
+        <option [value]="RequestState.APROVADO">Aprovado</option>
+        <option [value]="RequestState.REJEITADO">Rejeitado</option>
+      </select>
+    </div>
+
+    <div class="filters-bar__field">
+      <label for="aplicacao">Aplicação</label>
+      <select id="aplicacao" [(ngModel)]="filters.aplicacaoId" (ngModelChange)="onFilterChange()">
+        <option value="TODOS">Todas</option>
+        @for (app of applications(); track app.id) {
+          <option [value]="app.id">{{ app.nome }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filters-bar__field filters-bar__search">
+      <label for="pesquisa">Pesquisar</label>
+      <input
+        id="pesquisa"
+        type="text"
+        placeholder="Pesquisar…"
+        [(ngModel)]="filters.pesquisa"
+        (ngModelChange)="onFilterChange()"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state"><span class="spinner"></span> A carregar pedidos…</div>
+  } @else if (requests().length === 0) {
+    <div class="empty-state">Não foram encontrados pedidos com estes filtros.</div>
+  } @else {
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Aplicação</th>
+            <th>Estado</th>
+            <th>Data do Pedido</th>
+            <th>Atualizado em</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of requests(); track r.id) {
+            <tr>
+              <td class="mono">{{ r.id }}</td>
+              <td>{{ r.aplicacaoNome }}</td>
+              <td><app-state-badge [state]="r.estado" /></td>
+              <td>{{ r.dataPedido | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ r.atualizadoEm | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                <a class="icon-btn" [routerLink]="['/pedidos', r.id]" title="Ver pedido">👁</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <app-pagination
+    [page]="page()"
+    [totalPages]="totalPages()"
+    [totalElements]="totalElements()"
+    (pageChange)="onPageChange($event)"
+  />
+</div>
