@@ -25,11 +25,11 @@
           }
           <div class="detail-list__row">
             <dt>Data do Pedido</dt>
-            <dd>{{ r.dataPedido | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            <dd>{{ r.dataPedido | date: 'dd/MM/yyyy HH:mm':'Europe/Lisbon' }}</dd>
           </div>
           <div class="detail-list__row detail-list__row--block">
             <dt>Justificação</dt>
-            <dd>{{ r.justificativa }}</dd>
+            <dd>{{ r.justificacaoPedido  }}</dd>
           </div>
           @if (r.justificativaDecisao) {
             <div class="detail-list__row detail-list__row--block">
@@ -61,7 +61,7 @@
                 </td>
                 @if (historyEntryFor(state); as entry) {
                   <td>{{ entry.responsavelNome }}</td>
-                  <td>{{ entry.data | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ entry.data | date: 'dd/MM/yyyy HH:mm':'Europe/Lisbon' }}</td>
                   <td>{{ entry.justificativa }}</td>
                 } @else {
                   <td>-</td>

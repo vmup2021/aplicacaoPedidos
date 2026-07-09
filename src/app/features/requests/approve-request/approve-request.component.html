@@ -21,11 +21,11 @@
         </div>
         <div class="detail-list__row">
           <dt>Data do Pedido</dt>
-          <dd>{{ r.dataPedido | date: 'dd/MM/yyyy HH:mm' }}</dd>
+          <dd>{{ r.dataPedido | date: 'dd/MM/yyyy HH:mm':'Europe/Lisbon' }}</dd>
         </div>
         <div class="detail-list__row detail-list__row--block">
           <dt>Justificação do Colaborador</dt>
-          <dd>{{ r.justificativa }}</dd>
+          <dd>{{ r.justificacaoPedido }}</dd>
         </div>
       </dl>
 

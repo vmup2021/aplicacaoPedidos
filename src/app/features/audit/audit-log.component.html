@@ -63,7 +63,7 @@
         <tbody>
           @for (log of logs(); track log.id) {
             <tr>
-              <td class="mono">{{ log.data | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td class="mono">{{ log.data | date: 'dd/MM/yyyy HH:mm':'Europe/Lisbon' }}</td>
               <td>{{ log.utilizadorNome }}</td>
               <td>{{ log.acao }}</td>
               <td>{{ log.entidade }}</td>

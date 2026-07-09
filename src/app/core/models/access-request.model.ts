@@ -15,7 +15,7 @@ export interface AccessRequest {
   aplicacaoNome: string;
   colaboradorId: number;
   colaboradorNome: string;
-  justificativa: string;
+  justificacaoPedido: string;
   estado: RequestState;
   dataPedido: string; // ISO date-time
   atualizadoEm: string; // ISO date-time

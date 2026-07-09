@@ -147,7 +147,7 @@ function applyRequestFilters(items: AccessRequest[], params: any, skipEstado = f
     if (!skipEstado && estado && r.estado !== estado) return false;
     if (aplicacaoId && r.aplicacaoId !== Number(aplicacaoId)) return false;
     if (colaboradorId && r.colaboradorId !== Number(colaboradorId)) return false;
-    if (pesquisa && !`${r.aplicacaoNome} ${r.colaboradorNome} ${r.justificativa}`.toLowerCase().includes(pesquisa)) return false;
+    if (pesquisa && !`${r.aplicacaoNome} ${r.colaboradorNome} ${r.justificacaoPedido}`.toLowerCase().includes(pesquisa)) return false;
     return true;
   });
 }
@@ -177,7 +177,7 @@ function createRequest(user: User, payload: NewAccessRequestPayload): AccessRequ
     aplicacaoNome: app.nome,
     colaboradorId: user.id,
     colaboradorNome: user.nome,
-    justificativa: payload.justificativa,
+    justificacaoPedido: payload.justificativa,
     estado: RequestState.PENDENTE,
     dataPedido: now,
     atualizadoEm: now,
