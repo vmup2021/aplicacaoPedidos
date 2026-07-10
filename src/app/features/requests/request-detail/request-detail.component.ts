@@ -51,12 +51,13 @@ export class RequestDetailComponent implements OnInit {
 
   historyEntryFor(state: RequestState) {
     const currentRequest = this.request();
-  
+
+
     // Safe check: If request or its historico array don't exist yet, return null safely
     if (!currentRequest || !currentRequest.historico) {
       return null;
     }
 
-    return currentRequest.historico.find((h) => h.estado === state) ?? null;
+        return currentRequest.historico.find((h) => {console.log(h); return h.estado === state; }) ?? null;
 }
 }
