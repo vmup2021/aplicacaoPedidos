@@ -1,6 +1,7 @@
 import { User } from '../models/user.model';
 import { Application } from '../models/application.model';
 import { AccessRequest } from '../models/access-request.model';
+import { Department } from '../models/department.model';
 import { RequestState, UserRole } from '../models/enums';
 
 /**
@@ -9,11 +10,18 @@ import { RequestState, UserRole } from '../models/enums';
  * immediately in the UI. Resets whenever the page is fully reloaded.
  */
 
+export const mockDepartments: Department[] = [
+  { id: 1, nome: 'IT' },
+  { id: 2, nome: 'Finanças' },
+  { id: 3, nome: 'Operações' },
+  { id: 4, nome: 'Human Resources' },
+];
+
 export const mockUsers: User[] = [
-  { id: 1, nome: 'Eduardo Silva', email: 'eduardo.silva@natixis.com', departamento: 'IT', perfil: UserRole.COLABORADOR, ativo: true },
-  { id: 2, nome: 'Ana Costa', email: 'ana.costa@natixis.com', departamento: 'IT', perfil: UserRole.APROVADOR, ativo: true },
-  { id: 3, nome: 'João Santos', email: 'joao.santos@natixis.com', departamento: 'Finanças', perfil: UserRole.COLABORADOR, ativo: true },
-  { id: 4, nome: 'Mariana Rocha', email: 'mariana.rocha@natixis.com', departamento: 'Operações', perfil: UserRole.COLABORADOR, ativo: true },
+  { id: 1, nome: 'Eduardo Silva', email: 'eduardo.silva@natixis.com', departamento: 'IT', idDepartamento: 1, perfil: UserRole.COLABORADOR, ativo: true },
+  { id: 2, nome: 'Ana Costa', email: 'ana.costa@natixis.com', departamento: 'IT', idDepartamento: 1, perfil: UserRole.APROVADOR, ativo: true },
+  { id: 3, nome: 'João Santos', email: 'joao.santos@natixis.com', departamento: 'Finanças', idDepartamento: 2, perfil: UserRole.COLABORADOR, ativo: true },
+  { id: 4, nome: 'Mariana Rocha', email: 'mariana.rocha@natixis.com', departamento: 'Operações', idDepartamento: 3, perfil: UserRole.COLABORADOR, ativo: true },
 ];
 
 export const mockApplications: Application[] = [

@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { delay, of, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { mockApplications, mockIdCounters, mockRequests, mockUsers } from '../mocks/mock-data';
+import { mockApplications, mockDepartments, mockIdCounters, mockRequests, mockUsers } from '../mocks/mock-data';
 import { Page } from '../models/page.model';
 import { RequestState, UserRole } from '../models/enums';
 import { AccessRequest, DecisionPayload, NewAccessRequestPayload } from '../models/access-request.model';
@@ -66,6 +66,8 @@ function route(method: string, path: string, body: any, params: any, currentUser
   if (method === 'GET' && path === '/utilizadores/todos') return mockUsers;
   if (method === 'GET' && path === '/utilizadores') return listUsers(params);
   if (method === 'POST' && path === '/utilizadores') return createUser(body);
+
+  if (method === 'GET' && path === '/departamentos') return mockDepartments;
 
   m = idMatch(/^\/utilizadores\/(\d+)$/);
   if (method === 'PUT' && m) return updateUser(Number(m![1]), body);
@@ -270,7 +272,8 @@ function listUsers(params: any): Page<User> {
 
 function createUser(payload: UserFormValue): User {
   const { password, ...rest } = payload;
-  const user: User = { id: mockIdCounters.user++, ...rest };
+  const departamento = mockDepartments.find((d) => d.id === rest.idDepartamento)?.nome ?? '';
+  const user: User = { id: mockIdCounters.user++, ...rest, idDepartamento: rest.idDepartamento ?? 0, departamento };
   mockUsers.push(user);
   return user;
 }
@@ -279,7 +282,8 @@ function updateUser(id: number, payload: UserFormValue): User {
   const user = mockUsers.find((u) => u.id === id);
   if (!user) throw badRequest(`Utilizador #${id} não encontrado.`, 404);
   const { password, ...rest } = payload;
-  Object.assign(user, rest);
+  const departamento = mockDepartments.find((d) => d.id === rest.idDepartamento)?.nome ?? user.departamento;
+  Object.assign(user, rest, { departamento });
   return user;
 }
 
